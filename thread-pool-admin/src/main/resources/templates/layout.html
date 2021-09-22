@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <!-- 母版head begin -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>线程池管理后台</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"/>
+    <!-- 为啥不加载，不是加载不到-->
+    <link ref="stylesheet" href="css/color-dark.css"/>
+    <link ref="stylesheet" href="/css/icon.css"/>
+    <link ref="stylesheet" th:href="@{css/main.css}"/>
+    <!-- 母版head end -->
+    <!-- 子页head信息会按顺序出现在这里-->
+    <style>
+        .header {
+            position: relative;
+            box-sizing: border-box;
+            width: 100%;
+            height: 70px;
+            font-size: 22px;
+            color: #fff;
+            background-color: #242f42;
+        }
+
+        .collapse-btn {
+            float: left;
+            padding: 0 21px;
+            cursor: pointer;
+            line-height: 70px;
+        }
+
+        .header .logo {
+            float: left;
+            width: 250px;
+            line-height: 70px;
+        }
+
+        .header-right {
+            float: right;
+            padding-right: 50px;
+        }
+
+        .header-user-con {
+            display: flex;
+            height: 70px;
+            align-items: center;
+        }
+
+        .btn-fullscreen {
+            transform: rotate(45deg);
+            margin-right: 5px;
+            font-size: 24px;
+        }
+
+        .btn-bell,
+        .btn-fullscreen {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .btn-bell-badge {
+            position: absolute;
+            right: 0;
+            top: -2px;
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            background: #f56c6c;
+            color: #fff;
+        }
+
+        .btn-bell .el-icon-bell {
+            color: #fff;
+        }
+
+        .user-name {
+            margin-left: 10px;
+        }
+
+        .user-avator {
+            margin-left: 20px;
+        }
+
+        .user-avator img {
+            display: block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .el-dropdown-link {
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .el-dropdown-menu__item {
+            text-align: center;
+        }
+
+        .sidebar {
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+            overflow-y: scroll;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .sidebar-el-menu:not(.el-menu--collapse) {
+            width: 250px;
+        }
+
+        .sidebar > ul {
+            height: 100%;
+        }
+
+        .content-box {
+            position: absolute;
+            left: 250px;
+            right: 0;
+            top: 70px;
+            bottom: 0;
+            padding-bottom: 30px;
+            -webkit-transition: left .3s ease-in-out;
+            transition: left .3s ease-in-out;
+            background: #f0f0f0;
+        }
+
+        .content {
+            width: auto;
+            height: 100%;
+            padding: 10px;
+            overflow-y: scroll;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body, #app, .wrapper {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'PingFang SC', "Helvetica Neue", Helvetica, "microsoft yahei", arial, STHeiTi, sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="about">
+
+        <!-- header -->
+        <div id="dataHeader" class="header">
+            <!-- 折叠按钮 -->
+            <!--                <div class="collapse-btn" @click="collapseChage">-->
+            <div class="collapse-btn">
+                <!--                    <i v-if="!collapse" class="el-icon-s-fold"></i>-->
+                <i v-if="true" class="el-icon-s-fold"></i>
+                <i v-else class="el-icon-s-unfold"></i>
+            </div>
+            <div class="logo">后台管理系统</div>
+            <div class="header-right">
+                <div class="header-user-con">
+                    <!-- 用户头像 -->
+                    <div class="user-avator">
+                        <img src="/img/img.jpg"/>
+                    </div>
+                    <!-- 用户名下拉菜单 -->
+                    <el-dropdown class="user-name" trigger="click" @command="handleCommand">
+                    <span class="el-dropdown-link">
+                        {{username}}
+                        <i class="el-icon-caret-bottom"></i>
+                    </span>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <a href="https://github.com/shenlai/lessmore" target="_blank">
+                                    <el-dropdown-item>项目仓库</el-dropdown-item>
+                                </a>
+                                <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
+                </div>
+            </div>
+        </div>
+        <!-- left-sidebar -->
+        <div id="dataMenu" class="sidebar">
+            <!--                <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse"-->
+            <el-menu class="sidebar-el-menu" background-color="#324157"
+                     text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
+                <template v-for="item in items">
+                    <el-menu-item :index="item.index" :key="item.index">
+                        <a :href="item.index" style="color: rgb(191,203,217);text-decoration: none;">
+                            <i :class="item.icon"></i>
+                            <span>{{ item.title }}</span>
+                        </a>
+                    </el-menu-item>
+                </template>
+            </el-menu>
+        </div>
+        <!-- content-->
+        <div id="dataContent" class="content-box" >
+            <div class="content" layout:fragment="content">
+                <!--子页定义的东西会被追加到母版容器div上,本例中子页定义了style会加到这-->
+            </div>
+        </div>
+
+        <!-- footer -->
+        <div class="footer">
+
+        </div>
+
+    </div>
+</div>
+<!-- 先引入 Vue -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="http://mockjs.com/dist/mock.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="/js/tools.js"></script>
+<script type="text/javascript">
+
+    var dataHeader = new Vue({
+        el: '#dataHeader',
+        data: {
+            username: "temp"
+        },
+        methods: {
+            handleCommand: function (command) {
+                if (command == "loginout") {
+                    localStorage.removeItem("ms_username");
+                    //TODO 跳转
+                    //router.push("/login");
+                }
+            },
+
+        }
+    });
+    var app = new Vue({
+        el: '#dataMenu',
+        data: {
+            message: 2,
+            //显示加载中样式
+            loading: false,
+            items: [
+                {
+                    icon: "el-icon-s-home",
+                    index: "/dashboard",
+                    title: "系统首页",
+                },
+                {
+                    icon: "el-icon-s-grid",
+                    index: "/table",
+                    title: "线程管理",
+                }
+                // {
+                //     icon: "el-icon-date",
+                //     index: "3",
+                //     title: "表单相关",
+                //     subs: [
+                //         {
+                //             index: "/form",
+                //             title: "基本表单",
+                //         },
+                //         {
+                //             index: "/upload",
+                //             title: "文件上传",
+                //         },
+                //         {
+                //             index: "4",
+                //             title: "三级菜单",
+                //             subs: [
+                //                 {
+                //                     index: "/editor",
+                //                     title: "富文本编辑器",
+                //                 },
+                //             ],
+                //         },
+                //     ],
+                // }
+            ]
+        },
+        methods: {},
+        computed: {
+            //const route = useRoute();
+            onRoutes: function () {
+                //return useRoute().path;
+            },
+
+
+        }
+
+    })
+</script>
+
+<th:block layout:fragment="bottomscriptblock">
+    这里是预留给子页单独引用js用的,th:block Thymeleaf不会渲染,放代码块最合适
+    　　　　th:block is a mere attribute container that allows template developers to specify whichever attributes they
+    want.
+    　　　　Thymeleaf will execute these attributes and then simply make the block dissapear without a trace. 　　
+</th:block>
+</body>
+</html>

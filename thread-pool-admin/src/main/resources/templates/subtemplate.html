@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="~{layout.html}">
+<!-- layout母版页文件路径-->
+
+<head>
+    <!-- 子页head,会排在母版页的后面 -->
+</head>
+<body>
+
+<div layout:fragment="content" style="width:90%;">
+    <div>
+        子页内容
+    </div>
+</div>
+<th:block layout:fragment="bottomscriptblock">
+    <script th:src="@{/js/holder.min.js}"></script>
+</th:block>
+
+</body>
+</html>
