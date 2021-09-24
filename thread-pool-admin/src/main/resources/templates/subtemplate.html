@@ -9,13 +9,23 @@
 </head>
 <body>
 
-<div layout:fragment="content" style="width:90%;">
-    <div>
+<div layout:fragment="content">
+    <div id="subContent">
         子页内容
     </div>
 </div>
 <th:block layout:fragment="bottomscriptblock">
-    <script th:src="@{/js/holder.min.js}"></script>
+    <!--    <script th:src="@{/js/holder.min.js}"></script>-->
+    <script type="text/javascript">
+        var subContent = new Vue({
+            el: '#subContent',
+            data: {},
+            methods: {},
+            created: function () {
+                dataMenu.activeIndex = "/subPage"
+            }
+        });
+    </script>
 </th:block>
 
 </body>

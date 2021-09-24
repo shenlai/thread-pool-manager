@@ -6,7 +6,11 @@ import com.sl.admin.service.TestService;
 import com.sl.admin.vo.SearchVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -14,12 +18,13 @@ import java.util.List;
  * test
  */
 @Slf4j
-@RestController
+@Controller
 public class TestController {
 
     @Autowired
     private TestService testService;
 
+    @ResponseBody
     @GetMapping("/testPool")
     public String testPool() throws InterruptedException {
 
@@ -27,6 +32,16 @@ public class TestController {
         testService.testPool();
         log.info("testPool method exit");
         return "success";
+    }
+
+    /**
+     * vue demo
+     *
+     * @return
+     */
+    @RequestMapping("/subPage")
+    public String subPage() {
+        return "subtemplate";
     }
 
     /**
