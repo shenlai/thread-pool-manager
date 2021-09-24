@@ -6,11 +6,13 @@ import java.io.Serializable;
 
 /**
  * zk  thread pool 配置
+ *
  */
 @Data
 public class ZkThreadPoolCofModel  implements Serializable {
     private static final long serialVersionUID = -7272731817027176276L;
 
+    private String appName;
 
     private String poolName;
     /**

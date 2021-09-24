@@ -1,13 +1,9 @@
 package com.sl.admin.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-
 import com.sl.admin.model.BaseResponse;
 import com.sl.admin.model.ZkThreadPoolCofModel;
 import com.sl.admin.service.PoolManagerService;
 import com.sl.admin.vo.SearchPoolVO;
-import com.sl.admin.vo.SearchVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,14 +23,9 @@ public class PoolManagerController {
     @Autowired
     private PoolManagerService poolManagerService;
 
-
-    @RequestMapping({"/template"})
-    public String index() {
-        return "layout";
-    }
-
     /**
      * home page
+     *
      * @return
      */
     @RequestMapping({"/index", "/"})
@@ -43,18 +34,15 @@ public class PoolManagerController {
     }
 
 
-    /**
-     * vue demo
-     * @return
-     */
-    @RequestMapping("/poollist")
-    public String poollist() {
-        return "list";
+    @RequestMapping({"/template"})
+    public String index() {
+        return "layout";
     }
+
 
     @ResponseBody
     @RequestMapping("/getPoolList")
-    public BaseResponse<ZkThreadPoolCofModel> getPoolList(@RequestBody SearchPoolVO searchVO) {
+    public BaseResponse<List<ZkThreadPoolCofModel>> getPoolList(@RequestBody SearchPoolVO searchVO) {
         if (searchVO == null) {
             return BaseResponse.fail("参数错误");
         }
@@ -62,115 +50,25 @@ public class PoolManagerController {
         return BaseResponse.success(threadPoolCofList);
     }
 
-
     @ResponseBody
-    @RequestMapping("/data")
-    public Object getData(@RequestBody SearchVO searchVO) {
+    @RequestMapping("/getPoolInfo")
+    public BaseResponse<ZkThreadPoolCofModel> getPoolInfo(@RequestBody SearchPoolVO searchVO) {
         if (searchVO == null) {
-            return null;
+            return BaseResponse.fail("参数错误");
         }
-        Integer start = (searchVO.getCurrentPage() - 1) * searchVO.getPageSize();
-        Integer end = start + searchVO.getPageSize();
-        List<Object> arr = array.subList(start, end > array.size() ? array.size() : end);
-        return arr;
+        ZkThreadPoolCofModel threadPoolCof = poolManagerService.getThreadPoolCof(searchVO.getAppName(), searchVO.getThreadPoolName());
+        return BaseResponse.success(threadPoolCof);
     }
 
-    private static JSONArray array = JSON.parseArray("[\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"appName\": \"demoAPP\",\n" +
-            "        \"threadPoolName\": \"taskPool\",\n" +
-            "        \"coreSize\": 10,\n" +
-            "        \"maxSize\": 20,\n" +
-            "        \"keepAliveTime\": 3000,\n" +
-            "        \"capacity\": 1000\n" +
-            "    }\n" +
-            "]");
+    @ResponseBody
+    @RequestMapping("/savePoolInfo")
+    public BaseResponse getPoolInfo(@RequestBody ZkThreadPoolCofModel model) {
+        if (model == null) {
+            return BaseResponse.fail("参数错误");
+        }
+        boolean b = poolManagerService.saveThreadPoolCof(model);
+        return b ? BaseResponse.success(true) : BaseResponse.fail("保存失败");
+    }
+
+
 }

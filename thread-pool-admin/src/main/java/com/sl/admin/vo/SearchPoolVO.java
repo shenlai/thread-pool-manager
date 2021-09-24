@@ -9,5 +9,5 @@ import java.util.Date;
 public class SearchPoolVO implements Serializable {
     private static final long serialVersionUID = 6820520682140485895L;
     private String appName;
-    private Long threadPoolName;
+    private String threadPoolName;
 }

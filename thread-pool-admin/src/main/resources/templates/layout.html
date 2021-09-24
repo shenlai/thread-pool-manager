@@ -106,7 +106,8 @@
 
         .sidebar {
             display: block;
-            position: absolute;
+            height: 100%;
+            float: left;
             left: 0;
             top: 70px;
             bottom: 0;
@@ -126,8 +127,8 @@
         }
 
         .content-box {
-            position: absolute;
-            left: 250px;
+            height: 100%;
+            position: initial;
             right: 0;
             top: 70px;
             bottom: 0;
@@ -144,6 +145,23 @@
             overflow-y: scroll;
             -webkit-box-sizing: border-box;
             box-sizing: border-box;
+        }
+
+        .el-table th {
+            background-color: #f5f7fa ;
+        }
+
+        .active-menu {
+            color: #409eff !important;
+        }
+
+        .el-dialog__header {
+            border-bottom: 1px solid #ebeef5;
+        }
+
+        .el-menu-item-a {
+            color: rgb(191, 203, 217) ;
+            text-decoration: none;
         }
 
         * {
@@ -164,68 +182,63 @@
 </head>
 <body>
 <div class="wrapper">
-    <div class="about">
-
-        <!-- header -->
-        <div id="dataHeader" class="header">
-            <!-- 折叠按钮 -->
-            <!--                <div class="collapse-btn" @click="collapseChage">-->
-            <div class="collapse-btn">
-                <!--                    <i v-if="!collapse" class="el-icon-s-fold"></i>-->
-                <i v-if="true" class="el-icon-s-fold"></i>
-                <i v-else class="el-icon-s-unfold"></i>
-            </div>
-            <div class="logo">后台管理系统</div>
-            <div class="header-right">
-                <div class="header-user-con">
-                    <!-- 用户头像 -->
-                    <div class="user-avator">
-                        <img src="/img/img.jpg"/>
-                    </div>
-                    <!-- 用户名下拉菜单 -->
-                    <el-dropdown class="user-name" trigger="click" @command="handleCommand">
+    <!-- header -->
+    <div id="dataHeader" class="header">
+        <!-- 折叠按钮 -->
+        <div class="collapse-btn" @click="changeCollapse">
+            <i v-if="!isCollapse" class="el-icon-s-fold"></i>
+            <i v-else class="el-icon-s-unfold"></i>
+        </div>
+        <div class="logo">后台管理系统</div>
+        <div class="header-right">
+            <div class="header-user-con">
+                <!-- 用户头像 -->
+                <div class="user-avator">
+                    <img src="/img/img.jpg"/>
+                </div>
+                <!-- 用户名下拉菜单 -->
+                <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
                         {{username}}
                         <i class="el-icon-caret-bottom"></i>
                     </span>
-                        <template #dropdown>
-                            <el-dropdown-menu>
-                                <a href="https://github.com/shenlai/lessmore" target="_blank">
-                                    <el-dropdown-item>项目仓库</el-dropdown-item>
-                                </a>
-                                <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
-                </div>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <a href="https://github.com/shenlai/lessmore" target="_blank">
+                                <el-dropdown-item>项目仓库</el-dropdown-item>
+                            </a>
+                            <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
             </div>
         </div>
-        <!-- left-sidebar -->
-        <div id="dataMenu" class="sidebar">
-            <!--                <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse"-->
-            <el-menu class="sidebar-el-menu" background-color="#324157"
-                     text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
-                <template v-for="item in items">
-                    <el-menu-item :index="item.index" :key="item.index">
-                        <a :href="item.index" style="color: rgb(191,203,217);text-decoration: none;">
-                            <i :class="item.icon"></i>
-                            <span>{{ item.title }}</span>
-                        </a>
-                    </el-menu-item>
-                </template>
-            </el-menu>
+    </div>
+    <!-- left-sidebar -->
+    <div id="dataMenu" class="sidebar">
+        <!--                <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse"-->
+        <el-menu @select="handleSelect" class="sidebar-el-menu" :collapse="isCollapse" background-color="#324157"
+                 text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
+            <template v-for="item in items">
+                <el-menu-item class="nav-click" :class="{ 'active-menu': activeIndex==item.index }" :index="item.index"
+                              :key="item.index">
+                    <a :href="item.index" :class="{ 'active-menu': activeIndex==item.index }" class="el-menu-item-a">
+                        <i :class="[item.icon,{ 'active-menu': activeIndex==item.index }]"></i>
+                        <span>{{ item.title }}</span>
+                    </a>
+                </el-menu-item>
+            </template>
+        </el-menu>
+    </div>
+    <!-- content-->
+    <div id="dataContent" class="content-box">
+        <div class="content" layout:fragment="content">
+            <!--子页定义的东西会被追加到母版容器div上,本例中子页定义了style会加到这-->
         </div>
-        <!-- content-->
-        <div id="dataContent" class="content-box" >
-            <div class="content" layout:fragment="content">
-                <!--子页定义的东西会被追加到母版容器div上,本例中子页定义了style会加到这-->
-            </div>
-        </div>
+    </div>
 
-        <!-- footer -->
-        <div class="footer">
-
-        </div>
+    <!-- footer -->
+    <div class="footer">
 
     </div>
 </div>
@@ -238,10 +251,12 @@
 <script src="/js/tools.js"></script>
 <script type="text/javascript">
 
+
     var dataHeader = new Vue({
         el: '#dataHeader',
         data: {
-            username: "temp"
+            username: "temp",
+            isCollapse: false,
         },
         methods: {
             handleCommand: function (command) {
@@ -251,19 +266,23 @@
                     //router.push("/login");
                 }
             },
-
-        }
+            changeCollapse: function () {
+                this.isCollapse = !this.isCollapse;
+                dataMenu.isCollapse = this.isCollapse;
+            },
+        },
+        computed: {}
     });
-    var app = new Vue({
+
+    var dataMenu = new Vue({
         el: '#dataMenu',
         data: {
-            message: 2,
-            //显示加载中样式
-            loading: false,
+            isCollapse: false,
+            activeIndex: "/index",
             items: [
                 {
                     icon: "el-icon-s-home",
-                    index: "/dashboard",
+                    index: "/index",
                     title: "系统首页",
                 },
                 {
@@ -271,34 +290,13 @@
                     index: "/table",
                     title: "线程管理",
                 }
-                // {
-                //     icon: "el-icon-date",
-                //     index: "3",
-                //     title: "表单相关",
-                //     subs: [
-                //         {
-                //             index: "/form",
-                //             title: "基本表单",
-                //         },
-                //         {
-                //             index: "/upload",
-                //             title: "文件上传",
-                //         },
-                //         {
-                //             index: "4",
-                //             title: "三级菜单",
-                //             subs: [
-                //                 {
-                //                     index: "/editor",
-                //                     title: "富文本编辑器",
-                //                 },
-                //             ],
-                //         },
-                //     ],
-                // }
             ]
         },
-        methods: {},
+        methods: {
+            handleSelect(key, keyPath) {
+                console.log(key, keyPath);
+            }
+        },
         computed: {
             //const route = useRoute();
             onRoutes: function () {
@@ -307,8 +305,7 @@
 
 
         }
-
-    })
+    });
 </script>
 
 <th:block layout:fragment="bottomscriptblock">

@@ -23,11 +23,11 @@ public class BaseResponse<T> implements Serializable {
     private T content;
 
 
-    public static <T> BaseResponse success(T data) {
+    public static <T> BaseResponse<T> success(T data) {
         return new BaseResponse(data);
     }
 
-    public static <T> BaseResponse fail(String msg) {
+    public static BaseResponse fail(String msg) {
         return new BaseResponse(FAIL_CODE, msg);
     }
 
