@@ -27,7 +27,15 @@
         <el-row>
             <el-form :inline="true" :model="searchForm" class="demo-form-inline">
                 <el-form-item label="应用名称">
-                    <el-input v-model="searchForm.appName" placeholder="应用名称"></el-input>
+                    <!--                    <el-input v-model="searchForm.appName" placeholder="应用名称"></el-input>-->
+                    <el-select v-model="searchForm.appName" placeholder="请选择">
+                        <el-option
+                                v-for="item in appNames"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="线程池名称">
                     <el-input v-model="searchForm.threadPoolName" placeholder="线程池名称"></el-input>
@@ -147,11 +155,17 @@
                 loading: false,
                 //搜索表单
                 searchForm: {
-                    appName: "demoApp",
+                    appName: null,
                     threadPoolName: "",
                     pageSize: 10,
                     currentPage: 1
                 },
+                appNames: [
+                    {
+                        value: "",
+                        label: "请选择",
+                    }
+                ],
                 //当前页
                 currentPage: 1,
                 //分页大小
@@ -281,7 +295,28 @@
                         if (e != "cancel")
                             console.log("出现错误：" + e);
                     });
-                }
+                },
+                //应用列表
+                loadAppMames: function () {
+                    var self = this;
+                    axios({
+                        method: 'post',
+                        url: '/getAppList'
+                    }).then(function (response) {
+                        response.data.content.forEach(function (element) {
+                            var item = {
+                                value : element,
+                                label: element
+                            };
+                            self.appNames.push(item);
+                        });
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                },
+            },
+            created:function(){
+                this.loadAppMames()
             },
             filters: {
                 formatDate: function (value) {

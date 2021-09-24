@@ -74,5 +74,13 @@ public class PoolManagerService {
         return ret;
     }
 
+    public List<String> getAppNames() {
+        boolean ret = false;
+        List<ZkThreadPoolCofModel> retList = new ArrayList<>();
+        String nodePath = pathRoot;
+        List<String> childNodeList = zookeeperClient.getChildNode(nodePath);
+        return childNodeList;
+    }
+
 
 }

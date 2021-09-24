@@ -40,6 +40,12 @@ public class PoolManagerController {
     }
 
 
+    /**
+     * 线程池配置列表
+     *
+     * @param searchVO
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getPoolList")
     public BaseResponse<List<ZkThreadPoolCofModel>> getPoolList(@RequestBody SearchPoolVO searchVO) {
@@ -50,6 +56,12 @@ public class PoolManagerController {
         return BaseResponse.success(threadPoolCofList);
     }
 
+    /**
+     * 线程池配置信息
+     *
+     * @param searchVO
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getPoolInfo")
     public BaseResponse<ZkThreadPoolCofModel> getPoolInfo(@RequestBody SearchPoolVO searchVO) {
@@ -60,6 +72,12 @@ public class PoolManagerController {
         return BaseResponse.success(threadPoolCof);
     }
 
+    /**
+     * 保存线程池配置
+     *
+     * @param model
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/savePoolInfo")
     public BaseResponse getPoolInfo(@RequestBody ZkThreadPoolCofModel model) {
@@ -68,6 +86,18 @@ public class PoolManagerController {
         }
         boolean b = poolManagerService.saveThreadPoolCof(model);
         return b ? BaseResponse.success(true) : BaseResponse.fail("保存失败");
+    }
+
+    /**
+     * 应用列表
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getAppList")
+    public BaseResponse getAppList() {
+        List<String> appNames = poolManagerService.getAppNames();
+        return BaseResponse.success(appNames);
     }
 
 
